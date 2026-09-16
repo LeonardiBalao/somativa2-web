@@ -1,6 +1,8 @@
 body {
   margin: 20px;
   font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #111111;
 }
 
 input {
@@ -9,4 +11,8 @@ input {
 
 button {
   margin-top: 8px;
+}
+
+a {
+  color: #0645ad;
 }

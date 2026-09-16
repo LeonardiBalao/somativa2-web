@@ -16,7 +16,7 @@ class Login extends Component {
   async acessar() {
     try {
       await firebase.auth().signInWithEmailAndPassword(
-        this.state.email,
+        this.state.email.trim(),
         this.state.senha
       );
       this.props.history.push("/principal");
@@ -24,6 +24,7 @@ class Login extends Component {
       let state = this.state;
       state.mensagem = 'Usuário não está cadastrado';
       this.setState(state);
+      console.log(error.code, error.message);
     }
   }
 
@@ -37,6 +38,7 @@ class Login extends Component {
           type="text"
           size="20"
           placeholder="e-mail"
+          value={this.state.email}
           onChange={(e) => this.setState({ email: e.target.value })}
         />
         <br />
@@ -44,6 +46,7 @@ class Login extends Component {
           type="password"
           size="20"
           placeholder="senha"
+          value={this.state.senha}
           onChange={(e) => this.setState({ senha: e.target.value })}
         />
         <br />

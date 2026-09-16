@@ -8,25 +8,43 @@ class Principal extends Component {
     this.state = {
       nome: '',
       sobrenome: '',
-      nascimento: ''
+      nascimento: '',
+      mensagem: 'Carregando...'
     };
   }
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(async (usuario) => {
+    this.unsubscribe = firebase.auth().onAuthStateChanged(async (usuario) => {
       if (usuario) {
-        var doc = await firebase.firestore().collection("usuario").doc(usuario.uid).get();
-        if (doc.exists) {
+        try {
+          var doc = await firebase.firestore().collection("usuario").doc(usuario.uid).get();
+          if (doc.exists) {
+            this.setState({
+              nome: doc.data().nome,
+              sobrenome: doc.data().sobrenome,
+              nascimento: doc.data().nascimento,
+              mensagem: ''
+            });
+          } else {
+            this.setState({
+              mensagem: 'Usuario logado, mas nao achou dados no Firestore.'
+            });
+          }
+        } catch (error) {
           this.setState({
-            nome: doc.data().nome,
-            sobrenome: doc.data().sobrenome,
-            nascimento: doc.data().nascimento
+            mensagem: 'Erro ao ler Firestore: ' + error.message
           });
         }
       } else {
         this.props.history.push("/login");
       }
     });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   render() {
@@ -36,6 +54,7 @@ class Principal extends Component {
         <p>Nome: {this.state.nome}</p>
         <p>Sobrenome: {this.state.sobrenome}</p>
         <p>Data de nascimento: {this.state.nascimento}</p>
+        <p>{this.state.mensagem}</p>
         <br />
         <Link to="/login">Sair / Login</Link>
       </div>
